@@ -1,3 +1,3 @@
 rucstudy
 ========
-To assist our courses online.
+A web system to assist our courses.
