@@ -19,12 +19,12 @@ class QuestionAction extends CommonAction
 		//分页显示
 		import('ORG.Util.Page');
 		$countmodel = new Model();
-		$count=$countmodel->query("select count(*) from question where cno='" . $this->cno."'");
+		$count=$countmodel->query("select count(*) from question where cno='" . $this->cno."' and isexist = 1");
 		$page=new Page($count[0]['count(*)'],10);
 		$this->page = $page->show();
 		
 		$questionmodel = new Model();
-		$temp = $questionmodel->query("select * from question where cno='" . $this->cno."' order by raise_time DESC" . " limit ". $page->firstRow.",".$page->listRows);
+		$temp = $questionmodel->query("select * from question where cno='" . $this->cno."' and isexist = 1 order by raise_time DESC" . " limit ". $page->firstRow.",".$page->listRows);
 
 
 		foreach ($temp as $key => $value) {
@@ -61,13 +61,13 @@ class QuestionAction extends CommonAction
 		//分页显示
 		import('ORG.Util.Page');
 		$countmodel = new Model();
-		$count=$countmodel->query("select count(*) from question");
+		$count=$countmodel->query("select count(*) from question and isexist = 1");
 		$page=new Page($count[0]['count(*)'],10);
 		$this->page = $page->show();
 
 		//查询所有问题
 		$questionmodel = new Model();
-		$temp = $questionmodel->query('select * from question,course where question.cno=course.cno order by raise_time DESC' . ' limit '. $page->firstRow.','.$page->listRows);
+		$temp = $questionmodel->query('select * from question,course where question.cno=course.cno and question.isexist = 1 order by raise_time DESC' . ' limit '. $page->firstRow.','.$page->listRows);
 
 		foreach ($temp as $key => $value) {
 			$result = $questionmodel->query("select * from q_attention where sno='".session('uid')."' and qno=".$value['qno']);
@@ -106,13 +106,13 @@ class QuestionAction extends CommonAction
 		//分页显示
 		import('ORG.Util.Page');
 		$countmodel = new Model();
-		$count=$countmodel->query('select count(*) from question,q_attention where question.qno=q_attention.qno and q_attention.sno=' . session('uid'));
+		$count=$countmodel->query('select count(*) from question,q_attention where question.qno=q_attention.qno and question.isexist = 1 and q_attention.sno=' . session('uid'));
 
 		$page=new Page($count[0]['count(*)'],10);
 		$this->page = $page->show();
 
 		$questionmodel = new Model();
-		$temp = $questionmodel->query('select * from question,course,q_attention where question.cno=course.cno and question.qno=q_attention.qno and q_attention.sno=' . session('uid').' order by raise_time DESC' . ' limit '. $page->firstRow.','.$page->listRows);
+		$temp = $questionmodel->query('select * from question,course,q_attention where question.cno=course.cno and question.isexist = 1 and question.qno=q_attention.qno and q_attention.sno=' . session('uid').' order by raise_time DESC' . ' limit '. $page->firstRow.','.$page->listRows);
 
 		foreach ($temp as $key => $value) {
 			$result = $questionmodel->query("select * from q_attention where sno='".session('uid')."' and qno=".$value['qno']);
@@ -151,13 +151,13 @@ class QuestionAction extends CommonAction
 		//分页显示
 		import('ORG.Util.Page');
 		$countmodel = new Model();
-		$count=$countmodel->query("select count(*) from question where raise_sno=" . session('uid'));
+		$count=$countmodel->query("select count(*) from question where raise_sno='" . session('uid')."' and isexist = 1");
 
 		$page=new Page($count[0]['count(*)'],10);
 		$this->page = $page->show();
 
 		$myquestionmodel = new Model();
-		$temp = $myquestionmodel->query('select * from student,question,course where question.cno=course.cno and student.sno=question.raise_sno and raise_sno=' . session('uid')." order by raise_time DESC" . ' limit '. $page->firstRow.','.$page->listRows);
+		$temp = $myquestionmodel->query('select * from student,question,course where question.cno=course.cno and student.sno=question.raise_sno and question.isexist = 1 and raise_sno=' . session('uid')." order by raise_time DESC" . ' limit '. $page->firstRow.','.$page->listRows);
 		
 		foreach ($temp as $key => $value) {
 			$result = $myquestionmodel->query("select * from q_attention where sno='".session('uid')."' and qno=".$value['qno']);
@@ -185,6 +185,11 @@ class QuestionAction extends CommonAction
 		$this->cno=I('cno');
 		$this->cname = getCourseName(I('cno'));
 
+		$check = M()->query("select * from question where qno = ".I('qno')." and isexist = 1");
+		if(!$check){
+			$this->error("没有该问题");
+		}
+
 		//将消息设为已读
 		$tmp=readMessage(I('qno'));
 		//回答分页显示
@@ -197,7 +202,7 @@ class QuestionAction extends CommonAction
 
 		$model = new Model();
 		//查询输出结果
-		$temp1 = $model->query("select * from question where qno=" . $_GET['qno']);
+		$temp1 = $model->query("select * from question where qno=" . $_GET['qno']." and isexist = 1");
 		$temp2 = $model->query("select * from reply where qno='" . $_GET['qno'] . "'"." order by rplytime DESC" . ' limit '. $page->firstRow.','.$page->listRows);
 		$temp3 = $model->query("select * from remark,reply where qno='" . $_GET['qno'] . "' and remark.rpno=reply.rpno"." order by rmtime ASC");
 
@@ -282,7 +287,7 @@ class QuestionAction extends CommonAction
 		$n_cname = M()->query("select cname from course where cno='".I('cno')."'");
 
 		$model = new Model(); // 实例化一个model对象 没有对应任何数据表
-		$Qresult = $model->execute("insert into question(qtitle,cno,attnum,raise_sno,raise_time,rplynum,content) values('" . I('title') . "','" . I('cno') . "',0,'" . session('uid') . "',sysdate(),0,'" . $_POST['content'] . "')" );
+		$Qresult = $model->execute("insert into question(qtitle,cno,attnum,raise_sno,raise_time,rplynum,content,isexist) values('" . I('title') . "','" . I('cno') . "',0,'" . session('uid') . "',sysdate(),0,'" . $_POST['content'] . "',1)" );
 		
 
 		if($Qresult)
@@ -566,7 +571,7 @@ class QuestionAction extends CommonAction
 		}
 
 		$model = new Model();
-		$result = $model->execute("delete from question where qno=".I('qno'));
+		$result = $model->execute("update question set isexist = 0 where qno = ".I('qno'));
 
 		if($result)
 		{

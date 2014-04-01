@@ -84,14 +84,14 @@ class HomeworkAction extends CommonAction
 		// $upload->savePath =  './Uploads/Course/'. I('cno') .'/'.I('hno').'/'.session('uid').'/';// 设置附件上传目录
 		$data['furl']=$furl;
 		$judge = uploadfiles($furl);
-		if($judge!=1)
+		if(!$judge[0]['savename'])
 		{// 上传错误提示错误信息
 			//$data['status'] = $upload->getErrorMsg();
 			$data['status'] = $judge;
 		}else
 		{// 上传成功
 			$filemodel = new Model();//数据库插入记录
-			$file = $filemodel->execute("insert into stu_homework(sno,fname,ftime,hno,furl) values('".session('uid')."','".$_FILES['upload']['name']."',sysdate(),".I('hno').",'".$furl.$_FILES['upload']['name']."')");
+			$file = $filemodel->execute("insert into stu_homework(sno,fname,ftime,hno,furl) values('".session('uid')."','".$_FILES['upload']['name']."',sysdate(),".I('hno').",'".$furl.$judge[0]['savename']."')");
 			if($file)
 			{
 				$data['status']=1;

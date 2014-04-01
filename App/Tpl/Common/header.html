@@ -123,6 +123,14 @@
                             <a href="{:U('Index/UserProfile/index')}" id="username"><div class="list-icon"><span class="icon-user"></span></div>我的资料</a>
                         </li>
                         <li class="divider"></li>
+                        <?php if (session('isAssistant')==1) {
+                            # code...
+                         ?>
+                        <li>
+                            <a href="{:U('Index/Assistant/index')}" id="assistant"><div class="list-icon"><span class="icon-book"></span></div>我担任的助教</a>
+                        </li>
+                        <li class="divider"></li>
+                        <?php   } ?>
                         <li>
                             <a href="{:U('Index/Login/logout')}" id="btn-logout"><div class="list-icon"><span class="icon-signout"></span></div>登出</a>
                         </li>

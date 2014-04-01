@@ -17,12 +17,12 @@ class QuestionAction extends CommonCourseAction
 		//分页显示
 		import('ORG.Util.Page');
 		$countmodel = new Model();
-		$count=$countmodel->query("select count(*) from question where cno='" . $this->cno."'");
+		$count=$countmodel->query("select count(*) from question where cno='" . $this->cno."' and isexist = 1");
 		$page=new Page($count[0]['count(*)'],10);
 		$this->page = $page->show();
 		
 		$questionmodel = new Model();
-		$temp = $questionmodel->query("select * from question where cno='" . $this->cno."' order by raise_time DESC" . ' limit '. $page->firstRow.','.$page->listRows);
+		$temp = $questionmodel->query("select * from question where cno='" . $this->cno."' and isexist = 1 order by raise_time DESC" . ' limit '. $page->firstRow.','.$page->listRows);
 
 		foreach ($temp as $key => $value) {
 			$result = $questionmodel->query("select * from q_attention where sno='".session('uid')."' and qno=".$value['qno']);
@@ -52,7 +52,7 @@ class QuestionAction extends CommonCourseAction
 	public function createQuestion() 
 	{		
 		$model = new Model(); // 实例化一个model对象 没有对应任何数据表
-		$Qresult = $model->execute("insert into question(qtitle,cno,attnum,raise_sno,raise_time,rplynum,content,stu_tea) values('" . $_POST['title'] . "','" . I('cno') . "',0,'" . $_SESSION['uid'] . "',sysdate(),0,'" . $_POST['content'] . "','1')" );
+		$Qresult = $model->execute("insert into question(qtitle,cno,attnum,raise_sno,raise_time,rplynum,content,stu_tea,isexist) values('" . $_POST['title'] . "','" . I('cno') . "',0,'" . $_SESSION['uid'] . "',sysdate(),0,'" . $_POST['content'] . "','1',1)" );
 		$qno = mysql_insert_id();  //记录新增问题编号
 		if($Qresult)
 		{//如果插入成功，添加新鲜事
@@ -99,7 +99,7 @@ class QuestionAction extends CommonCourseAction
 
 
 		//查询输出结果
-		$temp1 = $model->query("select * from question where qno='" . $_GET['qno'] . "'");
+		$temp1 = $model->query("select * from question where qno='" . $_GET['qno'] . "' and isexist = 1");
 		$temp2 = $model->query("select * from reply where qno='" . $_GET['qno'] . "'"." order by rplytime DESC" . ' limit '. $page->firstRow.','.$page->listRows);
 		$temp3 = $model->query("select * from remark,reply where qno='" . $_GET['qno'] . "' and remark.rpno=reply.rpno"." order by rmtime ASC");
 
@@ -347,7 +347,7 @@ class QuestionAction extends CommonCourseAction
 		}
 
 		$model = new Model();
-		$result = $model->execute("delete from question where qno=".I('qno'));
+		$result = $model->execute("update question set isexist = 0 where qno = ".I('qno'));
 
 		M()->execute("delete from news where n_contentid=".I('qno'));
 

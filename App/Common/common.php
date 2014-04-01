@@ -351,12 +351,12 @@ function uploadfiles($url)
     //$upload->autoSub = true;
     //$upload->subType = 'custom';
     //$upload->subDir = 'Group';
-    $upload->saveRule = '';
+    // $upload->saveRule = '';
     $upload->savePath =  $url;// 设置附件上传目录
     if(!$upload->upload()){
         return $upload->getErrorMsg();
     }else{
-        return 1;
+        return $upload->getUploadFileInfo();
     }
 }
 
@@ -389,6 +389,28 @@ function parseAt($content){
     $replacement = "<a href='#'>@$1</a>";
     return preg_replace($pattern, $replacement, $content);
 
+}
+
+function setSession($name,$id,$course,$type){
+    if($type=='student'){
+        session('selectedCourses',$course);
+        session('uid', $id);
+        session('uname',$name);
+        session('type', 'student');
+
+        $isAssistant = M()->query("select * from assi_course where ano = '".session('uid')."'");
+        if($isAssistant){
+            session('isAssistant',1);
+        }else{
+            session('isAssistant',0);
+        }
+    }
+    if($type=='teacher'){
+        session('selectedCourses',$course);
+        session('uid', $id);
+        session('tname',$name);
+        session('type', 'teacher');
+    }
 }
 
 ?>

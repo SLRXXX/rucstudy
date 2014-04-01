@@ -53,14 +53,14 @@ class DocumentAction extends CommonCourseAction
 		}
 		
 		$judge = uploadfiles($furl);
-		if($judge!=1)
+		if(!$judge[0]['savename'])
 		{// 上传错误提示错误信息
 			$data['status'] = 5;
 			$data['info']=$judge;
 		}else
 		{// 上传成功
 			foreach ($_FILES['upload']['name'] as $key => $value) {
-					$file = $model->execute("insert into coursefile(fname,ftime,cno,furl) values('".$value."',sysdate(),'".I('cno')."','".$furl.$value."')");
+					$file = $model->execute("insert into coursefile(fname,ftime,cno,furl) values('".$value."',sysdate(),'".I('cno')."','".$furl.$judge[0]['savename']."')");
 					if($filenames)
 					{
 						$filenames = $filenames."，".$value;

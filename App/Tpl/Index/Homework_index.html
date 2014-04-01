@@ -143,14 +143,15 @@
 					$s.text('提交');
 					if (data.status == 1) {
 						alert("上传成功");
-						var dm=document.domain;
-						var curhw=$s.siblings('input[name=hno]').val();
-						//$.cookie('curHomework',curhw,{path:'/',domain:dm});
-						CA(1);						
-						var s=location.href;
-						var index=s.search(".html");
-						var newhref=s.substring(0,index)+"/hno/"+curhw+".html";
-						location.href=newhref;						
+						// var dm=document.domain;
+						// var curhw=$s.siblings('input[name=hno]').val();
+						// //$.cookie('curHomework',curhw,{path:'/',domain:dm});
+						// CA(1);						
+						// var s=location.href;
+						// var index=s.search(".html");
+						// var newhref=s.substring(0,index)+"/hno/"+curhw+".html";
+						// location.href=newhref;			
+						location.reload();			
 					} else {
 						alert("上传失败 原因：" + data.status);
 						CA(1);

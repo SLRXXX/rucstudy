@@ -169,7 +169,7 @@ class GroupAction extends CommonAction
 
 		
 		$judge = uploadfiles($furl);
-		if($judge!=1)
+		if(!$judge[0]['savename'])
 		{// 上传错误提示错误信息
 			$data['status'] = $judge;
 			$this->ajaxReturn($data,'json');
@@ -179,8 +179,8 @@ class GroupAction extends CommonAction
 			$model = new Model();
 			foreach ($_FILES['upload']['name'] as $key => $value)
 			{
-				$data[$key]="insert into grpfile(fname,ftime,gno,gurl,is_toclass) values('".$value."',sysdate(),".I('gno').",'".$furl.$value."',0)";
-				$file = $model->execute("insert into grpfile(fname,ftime,gno,gurl,is_toclass) values('".$value."',sysdate(),".I('gno').",'".$furl.$value."',0)");
+				$data[$key]="insert into grpfile(fname,ftime,gno,gurl,is_toclass) values('".$value."',sysdate(),".I('gno').",'".$furl.$judge[0]['savename']."',0)";
+				$file = $model->execute("insert into grpfile(fname,ftime,gno,gurl,is_toclass) values('".$value."',sysdate(),".I('gno').",'".$furl.$judge[0]['savename']."',0)");
 				if($filenames)
 					{
 						$filenames = $filenames."，".$value;

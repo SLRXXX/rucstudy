@@ -48,11 +48,8 @@ class LoginAction extends Action
 					*/
 					$coursemodel = new Model();
 					$this->course = $coursemodel->query("select course.cno, course.cname from course where course.tno='".$usernumber."'");
-					session('selectedCourses',$this->course);
-
-					session('tname',$tuser[0]['tname']);
-					session('uid', $usernumber);
-					session('type', 'teacher');
+					
+					setSession($tuser[0]['tname'],$usernumber,$this->course,'teacher');
 					$data['status']=1;
 					$this->ajaxReturn($data,'json');
 				}
@@ -73,12 +70,8 @@ class LoginAction extends Action
 				*/
 				$coursemodel = new Model();
 				$this->course = $coursemodel->query("select course.cno, course.cname from stu_course, course where stu_course.cno=course.cno and stu_course.sno='".$usernumber."'");
-				session('selectedCourses',$this->course);
-
-
-				session('uid', $usernumber);
-				session('uname',$suser[0]['sname']);
-				session('type', 'student');
+				
+				setSession($suser[0]['sname'],$usernumber,$this->course,'student');
 				$data['status']=2;
 				$this->ajaxReturn($data,'json');
 			}

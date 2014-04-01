@@ -9,9 +9,9 @@ return array(
 	//配置数据库
 	'DB_TYPE'   => 'mysql',
 	'DB_HOST' => '127.0.0.1',
-	'DB_USER' => 'root',
-	'DB_PWD' => 'xxxx',
-	'DB_NAME' => 'rucstudy',
+	'DB_USER' => 'unicourse',
+	'DB_PWD' => 'uni20130922!',
+	'DB_NAME' => 'rucstudytest',
 	'DB_PORT' => '3306',
 	'DB_PREFIX' => '',
 	

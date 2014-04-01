@@ -104,14 +104,14 @@ class HomeworkAction extends CommonCourseAction
 
 			//上传文件
 			$judge = uploadfiles($furl);
-			if(!$judge)
+			if(!$judge[0]['savename'])
 			{// 上传错误提示错误信息
 				$data['status'] = $judge;
 			}else
 			{// 上传成功
 				//数据库插入记录
 				foreach ($_FILES['upload']['name'] as $key => $value) {
-					$file = $model->execute("insert into homeworkfile(fname,ftime,hno,furl) values('" . $value . "',sysdate()," . $hno . ",'" . $furl . $value . "')");
+					$file = $model->execute("insert into homeworkfile(fname,ftime,hno,furl) values('" . $value . "',sysdate()," . $hno . ",'" . $furl . $judge[0]['savename'] . "')");
 				}
 			}
 			
